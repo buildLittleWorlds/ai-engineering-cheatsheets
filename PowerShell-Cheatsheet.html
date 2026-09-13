@@ -71,21 +71,31 @@
       section { break-inside: avoid; }
       .table-wrap { box-shadow: none; }
     }
-  </style>
+
+.essentials{margin:12px 0 40px;scroll-margin-top:105px}.quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.quick{padding:22px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 26px #14212b0a}.quick h3{margin:5px 0 12px;font-size:1.22rem;letter-spacing:-.025em}.quick p{margin:10px 0}.quick pre{background:#14212b;color:#e7f8ff;padding:14px;border-radius:8px;overflow-x:auto;line-height:1.55}.quick pre code{font-size:.86rem}.quick.wide{grid-column:1/-1}.band{border-top:2px solid var(--line);padding:26px 0 8px;margin-top:30px;scroll-margin-top:110px}.band p{color:var(--muted);max-width:850px}.label{color:var(--blue);font-size:.77rem;letter-spacing:.1em;font-weight:800;text-transform:uppercase}.quick ul{padding-left:20px}.quick details{margin-top:12px}.quick summary{cursor:pointer;color:var(--blue);font-weight:700}.quick .warn{border-left:3px solid #b7791f;padding-left:12px}.empty-result{padding:18px;background:#dff3f7;border-radius:10px}.search-count{font-size:.83rem;color:var(--muted);margin:5px 0}.pair-link{font-size:.9rem;margin:15px 0}.pair-link a{color:var(--blue)}.quick[hidden],.empty-result[hidden]{display:none!important}
+@media(max-width:720px){.quick-grid{grid-template-columns:1fr}.quick.wide{grid-column:auto}.quick{padding:18px}}
+@media print{.quick-grid{display:block}.quick{margin-bottom:14px;break-inside:avoid;box-shadow:none}.quick[hidden],.hidden{display:block!important}.empty-result,.search-count{display:none!important}.quick pre{white-space:pre-wrap}section.essentials{break-inside:auto}}
+</style>
 </head>
 <body>
-  <header>
-    <div class="eyebrow">Practical reference · Windows PowerShell &amp; PowerShell 7</div>
-    <h1>PowerShell<br>Cheat Sheet</h1>
-    <p class="lede">Commands are ordered roughly from most to least useful for everyday file work. Start at the top, practice the examples, and use the full command names when writing scripts.</p>
-    <div class="note"><strong>How to read this:</strong> <code>gci</code> is an alias for <code>Get-ChildItem</code>. Parameters such as <code>-Force</code> change a command’s behavior. A dot (<code>.</code>) means the current folder, and two dots (<code>..</code>) mean its parent.</div>
-  </header>
+  <header><div class="eyebrow">Practical reference · Windows PowerShell &amp; PowerShell 7</div><h1>PowerShell<br>Cheat Sheet</h1><p class="lede">Start with the small-program workflow: find your folder, run Python, inspect its output, change a text file, and rerun. Then explore the wider command reference below.</p><div class="note"><strong>Worked example:</strong> <code>assistant.py</code> reads <code>reference.txt</code> and prints a packet you manually carry to a response chat. Use your own filenames in other projects. Session 2 students can stay in the first block.</div><p class="pair-link"><a href="index.html">All cheatsheets</a> · <a href="Git-Cheatsheet.html">Git checkpoints</a></p></header>
 
   <main>
-    <div class="controls"><input id="search" type="search" placeholder="Filter commands, aliases, examples, or descriptions…" aria-label="Filter cheat sheet"></div>
-    <nav aria-label="Sections">
-      <a href="#navigation">Navigation</a><a href="#create">Create &amp; modify</a><a href="#inspect">Inspect</a><a href="#searching">Search &amp; filter</a><a href="#system">Processes &amp; system</a><a href="#help">Help &amp; output</a>
-    </nav>
+    <div class="controls"><input id="search" type="search" placeholder="Find a task or command: run, reference.txt, Get-Location…" aria-label="Filter cheat sheet"><p class="search-count" id="count" role="status" aria-live="polite"></p></div><nav aria-label="Sections"><a href="#essentials">Start here</a><a href="#broader">More reference</a><a href="#navigation">Folders</a><a href="#inspect">Read &amp; inspect</a><a href="#create">Write &amp; manage</a><a href="#searching">Filter &amp; search</a><a href="#system">System</a><a href="#help">Help &amp; web</a></nav>
+<section class="essentials" id="essentials"><div class="label">Start here · Run, inspect, change, repeat</div><h2>Work in the right folder. Run the right file.</h2><p class="section-note">A complete small-program loop, using a Python assistant that reads a text file. These are the commands and checks needed for Session 2; everything after this block is extra reference.</p>
+<div class="quick-grid">
+<article class="quick"><div class="label">A · Locate your work</div><h3>Open a fresh project folder</h3><p>Create a new folder in File Explorer and open it in VS Code. Keep earlier work intact. Save the supplied starter as <code>assistant.py</code> with Ctrl+S. Copy the new folder’s address, then at the PowerShell prompt run:</p><pre><code>Set-Location -LiteralPath "C:\Users\YourName\Documents\Session 2 AI Harness"
+Get-Location
+Get-ChildItem</code></pre><p><strong>Replace the example address with your actual path.</strong> Quotes keep spaces together; <code>-LiteralPath</code> treats the address literally. Confirm the displayed folder and <code>assistant.py</code>, not <code>assistant.py.txt</code>. A program’s relative paths start in the folder where you run it.</p></article>
+<article class="quick"><div class="label">B · Run the harness</div><h3>Start one manual exchange</h3><pre><code>uv run --no-project --python 3.13 python assistant.py</code></pre><p>This is the lesson’s exact launch command: <code>uv</code> selects Python 3.13 and runs the file without treating it as a uv project. It may obtain Python on first use; this script needs no extra packages.</p><p>At <code>Your question:</code>, enter <strong>Suggest three challenges for my game.</strong> Copy the packet inside START COPY / END COPY to a fresh response chat. Paste its answer back into the waiting program, press Enter after the last line, then enter <code>.done</code> alone.</p><p><strong>The starter displays the answer; it does not save it or call a model API.</strong> Keep a short safe excerpt yourself. A coding chat edits source; a separate response chat answers the packet.</p></article>
+<article class="quick"><div class="label">C · Know who is listening</div><h3>Check the terminal state before typing</h3><p><strong><code>PS … &gt;</code>:</strong> PowerShell is ready for shell commands, including the uv and Git commands.</p><p><strong><code>Your question:</code> or answer collection:</strong> Python is waiting for input. Shell commands typed here become program input. Finish the answer with <code>.done</code> on its own line or cancel with Ctrl+C.</p><p><strong><code>&gt;&gt;</code>:</strong> PowerShell may be waiting for an unfinished quote or expression. Ctrl+C cancels that entry; retype the complete command.</p><p><strong>At the prompt:</strong> Up recalls the previous command; Enter runs it again. Ctrl+C during this harness cancels the exchange and discards a partial answer. It does not save a checkpoint.</p></article>
+<article class="quick"><div class="label">D · Change the material</div><h3>Save, rerun, and inspect the new packet</h3><p>In VS Code, create <code>reference.txt</code> beside <code>assistant.py</code>. Save 5–10 short, non-sensitive lines as UTF-8 text. The sample world is underwater, has no combat, and uses music for communication.</p><p>After adding and inspecting the file-reading code, run the same launch command. Before sending anything, check that the whole reference appears in the printed packet.</p><p>Change <strong>music</strong> to <strong>colored lights</strong> in the file, save it, and start a new run with the <em>same question</em>. Use another fresh response chat. An already printed packet does not update when the file changes.</p><p><strong>Follow the evidence:</strong> file detail → printed packet → response. Python reads the file; ChatGPT sees only what you paste. Including the text does not guarantee that the response uses it correctly.</p></article>
+<article class="quick"><div class="label">E · One useful diagnostic</div><h3>If a file is missing or the wrong text appears</h3><pre><code>Get-Location
+Get-ChildItem</code></pre><p>Confirm both filenames, their folder, and saved editor changes. Check for <code>reference.txt.txt</code>. An empty, unreadable, or non-UTF-8 file should stop the revised program before it prepares a request. A PDF or Word file renamed to <code>.txt</code> is not plain text.</p><p>Finish or cancel the current run before trying again. If still blocked, record expected versus actual behavior and one next check. Do not change system protections to force a run.</p></article>
+<article class="quick"><div class="label">F · Keep the result you understand</div><h3>Two checkpoints; one short observation</h3><p>Use the <a href="Git-Cheatsheet.html#essentials">Git quick path</a> to preserve the starter and the code that reads your material. Stage only <code>.gitignore</code> and <code>assistant.py</code> for the first checkpoint, then <code>assistant.py</code> for the second. The example deliberately keeps <code>reference.txt</code> outside Git.</p><p>Record a safe detail from the file, its appearance in the packet, what the response did, and one limitation or next step. A failed diagnostic is still useful evidence. Label manual, simulated, observed, failed, and unfinished work honestly.</p><p>For Session 2, this supports the single 150–250-word progress note: progress, evidence, explanation, next step. Omit private paths and material. Simulated answers check transfer mechanics, not actual model use.</p></article>
+</div></section>
+<div class="band" id="broader"><div class="label">Next · Everyday shell reference</div><h2>More ways to work with files and text</h2><p>Look these up when you need them. The launch-and-check loop above is enough for the lesson; the following tables extend into general file work, scripting, system inspection, and web requests.</p></div>
+
 
     <section id="navigation">
       <h2>1. Navigate and list files</h2>
@@ -102,8 +112,21 @@
       </tbody></table></div>
     </section>
 
+    <section id="inspect">
+      <h2>2. Read and inspect things</h2>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Command</th><th>Alias</th><th>Example</th><th>What it does</th></tr></thead><tbody>
+        <tr><td class="rank">18</td><td class="command"><code>Get-Content</code></td><td class="alias"><code>gc</code>, <code>cat</code>, <code>type</code></td><td class="example"><code>gc '.\note.txt'</code></td><td>Reads file content. By default, each text line becomes a pipeline object.</td></tr>
+        <tr><td class="rank">19</td><td class="command"><code>Get-Member</code></td><td class="alias"><code>gm</code></td><td class="example"><code>gi '.\note.txt' | gm</code></td><td>Shows the properties, methods, and type of objects coming through the pipeline.</td></tr>
+        <tr><td class="rank">20</td><td class="command"><code>Select-Object</code></td><td class="alias"><code>select</code></td><td class="example"><code>gci | select Name, Length</code></td><td>Selects properties or a number of items, such as <code>-First 5</code> or <code>-Last 2</code>.</td></tr>
+        <tr><td class="rank">21</td><td class="command"><code>Measure-Object</code></td><td class="alias"><code>measure</code></td><td class="example"><code>gci -File | measure Length -Sum</code></td><td>Counts objects and can calculate sum, average, minimum, and maximum.</td></tr>
+        <tr><td class="rank">22</td><td class="command"><code>Get-Acl</code></td><td class="alias"><span class="muted">none</span></td><td class="example"><code>Get-Acl '.\note.txt'</code></td><td>Shows an item’s access permissions and owner.</td></tr>
+        <tr><td class="rank">23</td><td class="command"><code>Get-FileHash</code></td><td class="alias"><span class="muted">none</span></td><td class="example"><code>Get-FileHash '.\download.zip'</code></td><td>Calculates a cryptographic checksum, useful for checking file integrity.</td></tr>
+        <tr><td class="rank">24</td><td class="command"><code>Compare-Object</code></td><td class="alias"><code>compare</code>, <code>diff</code></td><td class="example"><code>Compare-Object $a $b</code></td><td>Compares two collections of objects and identifies differences.</td></tr>
+      </tbody></table></div>
+    </section>
+
     <section id="create">
-      <h2>2. Create, copy, move, and delete</h2>
+      <h2>3. Create, copy, move, and delete</h2>
       <p class="section-note">Deletion is permanent; PowerShell normally does not send items to the Recycle Bin.</p>
       <div class="table-wrap"><table><thead><tr><th>#</th><th>Command</th><th>Alias</th><th>Example</th><th>What it does</th></tr></thead><tbody>
         <tr><td class="rank">9</td><td class="command"><code>New-Item</code></td><td class="alias"><code>ni</code></td><td class="example"><code>ni notes.txt</code></td><td>Creates an item. Add <code>-ItemType Directory</code> for a folder; <code>mkdir folder</code> is the concise folder form.</td></tr>
@@ -118,18 +141,7 @@
       </tbody></table></div>
     </section>
 
-    <section id="inspect">
-      <h2>3. Read and inspect things</h2>
-      <div class="table-wrap"><table><thead><tr><th>#</th><th>Command</th><th>Alias</th><th>Example</th><th>What it does</th></tr></thead><tbody>
-        <tr><td class="rank">18</td><td class="command"><code>Get-Content</code></td><td class="alias"><code>gc</code>, <code>cat</code>, <code>type</code></td><td class="example"><code>gc '.\note.txt'</code></td><td>Reads file content. By default, each text line becomes a pipeline object.</td></tr>
-        <tr><td class="rank">19</td><td class="command"><code>Get-Member</code></td><td class="alias"><code>gm</code></td><td class="example"><code>gi '.\note.txt' | gm</code></td><td>Shows the properties, methods, and type of objects coming through the pipeline.</td></tr>
-        <tr><td class="rank">20</td><td class="command"><code>Select-Object</code></td><td class="alias"><code>select</code></td><td class="example"><code>gci | select Name, Length</code></td><td>Selects properties or a number of items, such as <code>-First 5</code> or <code>-Last 2</code>.</td></tr>
-        <tr><td class="rank">21</td><td class="command"><code>Measure-Object</code></td><td class="alias"><code>measure</code></td><td class="example"><code>gci -File | measure Length -Sum</code></td><td>Counts objects and can calculate sum, average, minimum, and maximum.</td></tr>
-        <tr><td class="rank">22</td><td class="command"><code>Get-Acl</code></td><td class="alias"><span class="muted">none</span></td><td class="example"><code>Get-Acl '.\note.txt'</code></td><td>Shows an item’s access permissions and owner.</td></tr>
-        <tr><td class="rank">23</td><td class="command"><code>Get-FileHash</code></td><td class="alias"><span class="muted">none</span></td><td class="example"><code>Get-FileHash '.\download.zip'</code></td><td>Calculates a cryptographic checksum, useful for checking file integrity.</td></tr>
-        <tr><td class="rank">24</td><td class="command"><code>Compare-Object</code></td><td class="alias"><code>compare</code>, <code>diff</code></td><td class="example"><code>Compare-Object $a $b</code></td><td>Compares two collections of objects and identifies differences.</td></tr>
-      </tbody></table></div>
-    </section>
+
 
     <section id="searching">
       <h2>4. Search, filter, sort, and transform</h2>
@@ -174,24 +186,16 @@
         <tr><td class="rank">50</td><td class="command"><code>Invoke-RestMethod</code></td><td class="alias"><code>irm</code></td><td class="example"><code>irm 'https://api.example.com/items'</code></td><td>Calls a web API and converts JSON responses into PowerShell objects.</td></tr>
       </tbody></table></div>
     </section>
-  </main>
+  <p class="empty-result" id="empty" hidden>No matching task or command. Try “run”, “file”, or “help”.</p></main>
 
-  <footer>
-    <strong>Safety habit:</strong> preview risky commands first. For many commands, add <code>-WhatIf</code>, for example <code>Remove-Item '.\old' -Recurse -WhatIf</code>. Aliases are convenient at the prompt; full cmdlet names are clearer in scripts.
-  </footer>
+  <footer><p><strong>Broader-command habit:</strong> preview changes before you make them. Many PowerShell commands support <code>-WhatIf</code>. Use full cmdlet names in scripts; short aliases are convenient at the prompt. uv and Git are separate programs, not PowerShell cmdlets.</p><p>Reference: <a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/">Microsoft PowerShell management commands</a> · <a href="https://docs.astral.sh/uv/reference/cli/">uv CLI</a>. Updated September 13, 2026. Save this page for offline use; print includes the complete reference.</p></footer>
 
   <script>
-    const search = document.querySelector('#search');
-    const rows = [...document.querySelectorAll('tbody tr')];
-    const sections = [...document.querySelectorAll('main section')];
-    search.addEventListener('input', () => {
-      const query = search.value.trim().toLowerCase();
-      rows.forEach(row => row.classList.toggle('hidden', !row.textContent.toLowerCase().includes(query)));
-      sections.forEach(section => {
-        const visibleRows = section.querySelectorAll('tbody tr:not(.hidden)').length;
-        section.classList.toggle('hidden', visibleRows === 0);
-      });
-    });
-  </script>
+const search=document.querySelector('#search');
+const items=[...document.querySelectorAll('.quick,tbody tr')];
+const sections=[...document.querySelectorAll('main section')];
+function filter(){const q=search.value.trim().toLowerCase();items.forEach(item=>item.classList.toggle('hidden',!item.textContent.toLowerCase().includes(q)));sections.forEach(section=>section.classList.toggle('hidden',!section.querySelector('.quick:not(.hidden),tbody tr:not(.hidden)')));const n=items.filter(item=>!item.classList.contains('hidden')).length;document.querySelector('#count').textContent=q?n+' matching cards or commands':'Quick path first · full command reference below';document.querySelector('#empty').hidden=n!==0;}
+search.addEventListener('input',filter);document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>{search.value='';filter();}));filter();
+</script>
 </body>
 </html>
