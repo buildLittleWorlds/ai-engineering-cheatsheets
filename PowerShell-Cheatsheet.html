@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PowerShell Practical Cheat Sheet</title>
+  <style>
+    :root {
+      --ink: #18202a;
+      --muted: #5d6977;
+      --paper: #f7f4ed;
+      --card: #fffdf8;
+      --line: #ddd7ca;
+      --blue: #155e75;
+      --blue-soft: #dff3f7;
+      --code: #14212b;
+      --code-ink: #e7f8ff;
+      --gold: #b7791f;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top right, #d9edf1 0, transparent 28rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    header, main, footer { width: min(1120px, calc(100% - 32px)); margin-inline: auto; }
+    header { padding: 64px 0 30px; }
+    .eyebrow { color: var(--blue); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; font-size: .78rem; }
+    h1 { margin: .35rem 0 .6rem; font-size: clamp(2.2rem, 6vw, 4.8rem); line-height: .98; letter-spacing: -.055em; }
+    .lede { max-width: 760px; color: var(--muted); font-size: 1.08rem; }
+    .note {
+      margin-top: 22px; padding: 14px 17px; max-width: 850px;
+      background: var(--blue-soft); border-left: 4px solid var(--blue); border-radius: 7px;
+    }
+    .controls { position: sticky; top: 0; z-index: 5; padding: 12px 0; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); }
+    input {
+      width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 13px 16px;
+      background: var(--card); color: var(--ink); font: inherit; box-shadow: 0 5px 18px #14212b0d;
+    }
+    input:focus { outline: 3px solid #67b6c555; border-color: var(--blue); }
+    nav { display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0 34px; }
+    nav a { color: var(--blue); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 6px 11px; text-decoration: none; font-size: .88rem; }
+    section { margin: 0 0 38px; scroll-margin-top: 80px; }
+    h2 { margin: 0 0 6px; font-size: 1.55rem; letter-spacing: -.025em; }
+    .section-note { margin: 0 0 15px; color: var(--muted); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: 0 12px 32px #14212b0a; }
+    table { width: 100%; border-collapse: collapse; min-width: 780px; }
+    th { color: var(--muted); background: #f0ece3; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; text-align: left; }
+    th, td { padding: 13px 15px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #fffaf0; }
+    .rank { width: 44px; color: var(--gold); font-weight: 800; }
+    code { font-family: "Cascadia Code", Consolas, monospace; font-size: .9em; }
+    .command code { color: var(--code-ink); background: var(--code); padding: 4px 7px; border-radius: 6px; white-space: nowrap; }
+    .alias code { color: var(--blue); font-weight: 800; }
+    .example code { white-space: nowrap; }
+    .muted { color: var(--muted); }
+    .hidden { display: none; }
+    footer { padding: 5px 0 50px; color: var(--muted); font-size: .88rem; }
+    @media print {
+      body { background: white; font-size: 10pt; }
+      header { padding-top: 0; }
+      .controls, nav { display: none; }
+      section { break-inside: avoid; }
+      .table-wrap { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">Practical reference · Windows PowerShell &amp; PowerShell 7</div>
+    <h1>PowerShell<br>Cheat Sheet</h1>
+    <p class="lede">Commands are ordered roughly from most to least useful for everyday file work. Start at the top, practice the examples, and use the full command names when writing scripts.</p>
+    <div class="note"><strong>How to read this:</strong> <code>gci</code> is an alias for <code>Get-ChildItem</code>. Parameters such as <code>-Force</code> change a command’s behavior. A dot (<code>.</code>) means the current folder, and two dots (<code>..</code>) mean its parent.</div>
+  </header>
+
+  <main>
+    <div class="controls"><input id="search" type="search" placeholder="Filter commands, aliases, examples, or descriptions…" aria-label="Filter cheat sheet"></div>
+    <nav aria-label="Sections">
+      <a href="#navigation">Navigation</a><a href="#create">Create &amp; modify</a><a href="#inspect">Inspect</a><a href="#searching">Search &amp; filter</a><a href="#system">Processes &amp; system</a><a href="#help">Help &amp; output</a>
+    </nav>
+
+    <section id="navigation">
+      <h2>1. Navigate and list files</h2>
+      <p class="section-note">The commands you will probably use in nearly every session.</p>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Command</th><th>Alias</th><th>Example</th><th>What it does</th></tr></thead><tbody>
+        <tr><td class="rank">1</td><td class="command"><code>Get-ChildItem</code></td><td class="alias"><code>gci</code>, <code>ls</code>, <code>dir</code></td><td class="example"><code>gci -Force</code></td><td>Lists items in a location. <code>-Force</code> includes hidden items; <code>-Recurse</code> descends into subfolders.</td></tr>
+        <tr><td class="rank">2</td><td class="command"><code>Set-Location</code></td><td class="alias"><code>sl</code>, <code>cd</code>, <code>chdir</code></td><td class="example"><code>cd '.\My Folder'</code></td><td>Changes the current location. Use <code>cd ..</code> to move to the parent folder.</td></tr>
+        <tr><td class="rank">3</td><td class="command"><code>Get-Location</code></td><td class="alias"><code>gl</code>, <code>pwd</code></td><td class="example"><code>pwd</code></td><td>Shows the full path of the current location.</td></tr>
+        <tr><td class="rank">4</td><td class="command"><code>Get-Item</code></td><td class="alias"><code>gi</code></td><td class="example"><code>gi '.\notes.txt'</code></td><td>Gets one specific file or folder as an object, including its properties.</td></tr>
+        <tr><td class="rank">5</td><td class="command"><code>Push-Location</code></td><td class="alias"><code>pushd</code></td><td class="example"><code>pushd 'C:\Temp'</code></td><td>Saves the current location on a stack and moves somewhere else.</td></tr>
+        <tr><td class="rank">6</td><td class="command"><code>Pop-Location</code></td><td class="alias"><code>popd</code></td><td class="example"><code>popd</code></td><td>Returns to the most recently saved location from <code>Push-Location</code>.</td></tr>
+        <tr><td class="rank">7</td><td class="command"><code>Resolve-Path</code></td><td class="alias"><code>rvpa</code></td><td class="example"><code>Resolve-Path .</code></td><td>Resolves a relative or wildcard path into its full path.</td></tr>
+        <tr><td class="rank">8</td><td class="command"><code>Test-Path</code></td><td class="alias"><span class="muted">none</span></td><td class="example"><code>Test-Path '.\notes.txt'</code></td><td>Returns <code>True</code> or <code>False</code> to indicate whether a path exists.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="create">
+      <h2>2. Create, copy, move, and delete</h2>
+      <p class="section-note">Deletion is permanent; PowerShell normally does not send items to the Recycle Bin.</p>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Command</th><th>Alias</th><th>Example</th><th>What it does</th></tr></thead><tbody>
+        <tr><td class="rank">9</td><td class="command"><code>New-Item</code></td><td class="alias"><code>ni</code></td><td class="example"><code>ni notes.txt</code></td><td>Creates an item. Add <code>-ItemType Directory</code> for a folder; <code>mkdir folder</code> is the concise folder form.</td></tr>
+        <tr><td class="rank">10</td><td class="command"><code>Copy-Item</code></td><td class="alias"><code>cpi</code>, <code>cp</code>, <code>copy</code></td><td class="example"><code>cp '.\a.txt' '.\backup\'</code></td><td>Copies files or folders. Use <code>-Recurse</code> to copy a folder and its contents.</td></tr>
+        <tr><td class="rank">11</td><td class="command"><code>Move-Item</code></td><td class="alias"><code>mi</code>, <code>mv</code>, <code>move</code></td><td class="example"><code>mv '.\a.txt' '.\archive\'</code></td><td>Moves an item to another location; it can also rename an item.</td></tr>
+        <tr><td class="rank">12</td><td class="command"><code>Remove-Item</code></td><td class="alias"><code>ri</code>, <code>rm</code>, <code>del</code></td><td class="example"><code>ri '.\old' -Recurse -Force</code></td><td>Deletes items. <code>-Recurse</code> includes children and <code>-Force</code> includes hidden/read-only items.</td></tr>
+        <tr><td class="rank">13</td><td class="command"><code>Rename-Item</code></td><td class="alias"><code>rni</code>, <code>ren</code></td><td class="example"><code>rni 'old.txt' 'new.txt'</code></td><td>Changes an item’s name without moving it to another folder.</td></tr>
+        <tr><td class="rank">14</td><td class="command"><code>Set-Content</code></td><td class="alias"><code>sc</code></td><td class="example"><code>'hello' | sc '.\note.txt'</code></td><td>Writes content to a file, replacing anything already there.</td></tr>
+        <tr><td class="rank">15</td><td class="command"><code>Add-Content</code></td><td class="alias"><code>ac</code></td><td class="example"><code>'another line' | ac '.\note.txt'</code></td><td>Appends content to the end of a file.</td></tr>
+        <tr><td class="rank">16</td><td class="command"><code>Clear-Content</code></td><td class="alias"><code>clc</code></td><td class="example"><code>clc '.\note.txt'</code></td><td>Empties a file but leaves the file itself in place.</td></tr>
+        <tr><td class="rank">17</td><td class="command"><code>Join-Path</code></td><td class="alias"><span class="muted">none</span></td><td class="example"><code>Join-Path $HOME 'notes.txt'</code></td><td>Combines path components safely.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="inspect">
+      <h2>3. Read and inspect things</h2>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Command</th><th>Alias</th><th>Example</th><th>What it does</th></tr></thead><tbody>
+        <tr><td class="rank">18</td><td class="command"><code>Get-Content</code></td><td class="alias"><code>gc</code>, <code>cat</code>, <code>type</code></td><td class="example"><code>gc '.\note.txt'</code></td><td>Reads file content. By default, each text line becomes a pipeline object.</td></tr>
+        <tr><td class="rank">19</td><td class="command"><code>Get-Member</code></td><td class="alias"><code>gm</code></td><td class="example"><code>gi '.\note.txt' | gm</code></td><td>Shows the properties, methods, and type of objects coming through the pipeline.</td></tr>
+        <tr><td class="rank">20</td><td class="command"><code>Select-Object</code></td><td class="alias"><code>select</code></td><td class="example"><code>gci | select Name, Length</code></td><td>Selects properties or a number of items, such as <code>-First 5</code> or <code>-Last 2</code>.</td></tr>
+        <tr><td class="rank">21</td><td class="command"><code>Measure-Object</code></td><td class="alias"><code>measure</code></td><td class="example"><code>gci -File | measure Length -Sum</code></td><td>Counts objects and can calculate sum, average, minimum, and maximum.</td></tr>
+        <tr><td class="rank">22</td><td class="command"><code>Get-Acl</code></td><td class="alias"><span class="muted">none</span></td><td class="example"><code>Get-Acl '.\note.txt'</code></td><td>Shows an item’s access permissions and owner.</td></tr>
+        <tr><td class="rank">23</td><td class="command"><code>Get-FileHash</code></td><td class="alias"><span class="muted">none</span></td><td class="example"><code>Get-FileHash '.\download.zip'</code></td><td>Calculates a cryptographic checksum, useful for checking file integrity.</td></tr>
+        <tr><td class="rank">24</td><td class="command"><code>Compare-Object</code></td><td class="alias"><code>compare</code>, <code>diff</code></td><td class="example"><code>Compare-Object $a $b</code></td><td>Compares two collections of objects and identifies differences.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="searching">
+      <h2>4. Search, filter, sort, and transform</h2>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Command</th><th>Alias</th><th>Example</th><th>What it does</th></tr></thead><tbody>
+        <tr><td class="rank">25</td><td class="command"><code>Where-Object</code></td><td class="alias"><code>where</code>, <code>?</code></td><td class="example"><code>gci | ? Length -gt 1MB</code></td><td>Filters pipeline objects by a condition.</td></tr>
+        <tr><td class="rank">26</td><td class="command"><code>ForEach-Object</code></td><td class="alias"><code>foreach</code>, <code>%</code></td><td class="example"><code>gci | % Name</code></td><td>Runs an operation for every pipeline object.</td></tr>
+        <tr><td class="rank">27</td><td class="command"><code>Sort-Object</code></td><td class="alias"><code>sort</code></td><td class="example"><code>gci | sort Length -Descending</code></td><td>Sorts objects by one or more properties.</td></tr>
+        <tr><td class="rank">28</td><td class="command"><code>Select-String</code></td><td class="alias"><code>sls</code></td><td class="example"><code>sls 'error' '.\*.log'</code></td><td>Searches text for a word or regular-expression pattern.</td></tr>
+        <tr><td class="rank">29</td><td class="command"><code>Group-Object</code></td><td class="alias"><code>group</code></td><td class="example"><code>gci | group Extension</code></td><td>Groups objects that share a property value and counts each group.</td></tr>
+        <tr><td class="rank">30</td><td class="command"><code>Get-Unique</code></td><td class="alias"><code>gu</code></td><td class="example"><code>$names | sort | gu</code></td><td>Removes adjacent duplicate values; sort first to group duplicates together.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="system">
+      <h2>5. Processes, services, and environment</h2>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Command</th><th>Alias</th><th>Example</th><th>What it does</th></tr></thead><tbody>
+        <tr><td class="rank">31</td><td class="command"><code>Get-Process</code></td><td class="alias"><code>gps</code>, <code>ps</code></td><td class="example"><code>gps</code></td><td>Lists running processes and information such as CPU and memory use.</td></tr>
+        <tr><td class="rank">32</td><td class="command"><code>Start-Process</code></td><td class="alias"><code>saps</code>, <code>start</code></td><td class="example"><code>start notepad.exe</code></td><td>Starts an application or process.</td></tr>
+        <tr><td class="rank">33</td><td class="command"><code>Stop-Process</code></td><td class="alias"><code>spps</code>, <code>kill</code></td><td class="example"><code>Stop-Process -Id 1234</code></td><td>Stops a process by ID or name. Unsaved application data may be lost.</td></tr>
+        <tr><td class="rank">34</td><td class="command"><code>Get-Service</code></td><td class="alias"><code>gsv</code></td><td class="example"><code>gsv</code></td><td>Lists Windows services and their current status.</td></tr>
+        <tr><td class="rank">35</td><td class="command"><code>Start-Service</code></td><td class="alias"><code>sasv</code></td><td class="example"><code>Start-Service spooler</code></td><td>Starts a Windows service; elevated permission may be required.</td></tr>
+        <tr><td class="rank">36</td><td class="command"><code>Stop-Service</code></td><td class="alias"><code>spsv</code></td><td class="example"><code>Stop-Service spooler</code></td><td>Stops a Windows service; elevated permission may be required.</td></tr>
+        <tr><td class="rank">37</td><td class="command"><code>Get-CimInstance</code></td><td class="alias"><code>gcim</code></td><td class="example"><code>gcim Win32_OperatingSystem</code></td><td>Retrieves structured system and device information.</td></tr>
+        <tr><td class="rank">38</td><td class="command"><code>Get-Variable</code></td><td class="alias"><code>gv</code></td><td class="example"><code>gv</code></td><td>Lists PowerShell variables. Environment variables are available under <code>Env:</code>.</td></tr>
+        <tr><td class="rank">39</td><td class="command"><code>Get-PSDrive</code></td><td class="alias"><code>gdr</code></td><td class="example"><code>gdr</code></td><td>Lists file-system drives and special providers such as <code>Env:</code> and <code>Alias:</code>.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="help">
+      <h2>6. Help, history, formatting, and web</h2>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Command</th><th>Alias</th><th>Example</th><th>What it does</th></tr></thead><tbody>
+        <tr><td class="rank">40</td><td class="command"><code>Get-Help</code></td><td class="alias"><code>help</code>, <code>man</code></td><td class="example"><code>help Get-ChildItem -Examples</code></td><td>Shows documentation, syntax, parameters, and examples for a command.</td></tr>
+        <tr><td class="rank">41</td><td class="command"><code>Get-Command</code></td><td class="alias"><code>gcm</code></td><td class="example"><code>gcm '*file*'</code></td><td>Finds commands by name, verb, noun, type, or module.</td></tr>
+        <tr><td class="rank">42</td><td class="command"><code>Get-Alias</code></td><td class="alias"><code>gal</code></td><td class="example"><code>gal gci</code></td><td>Shows the full command behind an alias, or lists all aliases.</td></tr>
+        <tr><td class="rank">43</td><td class="command"><code>Get-History</code></td><td class="alias"><code>ghy</code>, <code>h</code>, <code>history</code></td><td class="example"><code>history</code></td><td>Lists commands entered during the current PowerShell session.</td></tr>
+        <tr><td class="rank">44</td><td class="command"><code>Invoke-History</code></td><td class="alias"><code>ihy</code>, <code>r</code></td><td class="example"><code>r 12</code></td><td>Runs a command again using its history ID.</td></tr>
+        <tr><td class="rank">45</td><td class="command"><code>Clear-Host</code></td><td class="alias"><code>cls</code>, <code>clear</code></td><td class="example"><code>cls</code></td><td>Clears the visible terminal screen.</td></tr>
+        <tr><td class="rank">46</td><td class="command"><code>Format-Table</code></td><td class="alias"><code>ft</code></td><td class="example"><code>gci | ft Name, Length</code></td><td>Formats final display output as a table. Keep formatting commands at the end of a pipeline.</td></tr>
+        <tr><td class="rank">47</td><td class="command"><code>Format-List</code></td><td class="alias"><code>fl</code></td><td class="example"><code>gi . | fl *</code></td><td>Formats an object as a vertical property list; <code>*</code> requests all properties.</td></tr>
+        <tr><td class="rank">48</td><td class="command"><code>Export-Csv</code></td><td class="alias"><code>epcsv</code></td><td class="example"><code>gci | Export-Csv files.csv</code></td><td>Saves objects as CSV rows for a spreadsheet or later processing.</td></tr>
+        <tr><td class="rank">49</td><td class="command"><code>Invoke-WebRequest</code></td><td class="alias"><code>iwr</code></td><td class="example"><code>iwr 'https://example.com'</code></td><td>Makes a web request and returns response details and content.</td></tr>
+        <tr><td class="rank">50</td><td class="command"><code>Invoke-RestMethod</code></td><td class="alias"><code>irm</code></td><td class="example"><code>irm 'https://api.example.com/items'</code></td><td>Calls a web API and converts JSON responses into PowerShell objects.</td></tr>
+      </tbody></table></div>
+    </section>
+  </main>
+
+  <footer>
+    <strong>Safety habit:</strong> preview risky commands first. For many commands, add <code>-WhatIf</code>, for example <code>Remove-Item '.\old' -Recurse -WhatIf</code>. Aliases are convenient at the prompt; full cmdlet names are clearer in scripts.
+  </footer>
+
+  <script>
+    const search = document.querySelector('#search');
+    const rows = [...document.querySelectorAll('tbody tr')];
+    const sections = [...document.querySelectorAll('main section')];
+    search.addEventListener('input', () => {
+      const query = search.value.trim().toLowerCase();
+      rows.forEach(row => row.classList.toggle('hidden', !row.textContent.toLowerCase().includes(query)));
+      sections.forEach(section => {
+        const visibleRows = section.querySelectorAll('tbody tr:not(.hidden)').length;
+        section.classList.toggle('hidden', visibleRows === 0);
+      });
+    });
+  </script>
+</body>
+</html>
